@@ -1,6 +1,6 @@
-from typing import LiteralString
 from uuid import uuid4
 from django.db import models
+from typing import LiteralString
 
 
 class Product(models.Model):
@@ -20,7 +20,6 @@ class Order(models.Model):
 
     id = models.UUIDField(primary_key=True, default=uuid4)
     table_number = models.IntegerField()
-    items = models.ManyToManyField(Product, through="OrderItem", related_name="orders")
     total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     status = models.CharField(
         max_length=10, choices=StatusChoices.choices, default=StatusChoices.PENDING
@@ -30,13 +29,15 @@ class Order(models.Model):
         return f"Заказ №{self.id} для Столика №{self.table_number}"
 
     def calculate_total(self) -> None:
-        total: float = sum(item.item_total_price() for item in self.items.all())
-        self.total_price: float = total
+        total: float = sum(item.item_total_price for item in self.order_items.all())
+        self.total_price = total
         self.save()
 
 
 class OrderItem(models.Model):
-    order = models.ForeignKey(Order, related_name="items", on_delete=models.CASCADE)
+    order = models.ForeignKey(
+        Order, related_name="order_items", on_delete=models.CASCADE
+    )
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
 
