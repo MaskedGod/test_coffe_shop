@@ -1,17 +1,17 @@
 {% extends 'base.html' %} {% block content %}
-<h2>Создание нового заказа</h2>
+<h2>Редактирование заказа</h2>
 
 <form method="POST">
   {% csrf_token %} {{ order_form.as_p }}
 
-  <h3>Добавить продукты</h3>
+  <h3>Редактировать продукты</h3>
   <div id="order-items">
     {{ formset.management_form }} {% for form in formset %}
     <div class="form-row">{{ form.as_p }}</div>
     {% endfor %}
   </div>
 
-  <button type="submit">Создать заказ</button>
+  <button type="submit">Сохранить изменения</button>
 </form>
 
 <a href="{% url 'index' %}">Назад к списку заказов</a>

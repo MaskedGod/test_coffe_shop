@@ -18,6 +18,6 @@ OrderItemFormSet = forms.inlineformset_factory(
     Order,
     OrderItem,
     fields=["product", "quantity"],
-    extra=1,
+    extra=5,
     can_delete=True,
 )
