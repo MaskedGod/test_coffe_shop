@@ -2,12 +2,18 @@
 <h2>Создание нового заказа</h2>
 
 <form method="POST">
-  {% csrf_token %} {{ order_form.as_p }}
+  {% csrf_token %} {{ order_form.as_p }} {% if order_form.errors %}
+  <div class="alert alert-danger">{{ order_form.errors }}</div>
+  {% endif %}
 
   <h3>Добавить продукты</h3>
   <div id="order-items">
     {{ formset.management_form }} {% for form in formset %}
-    <div class="form-row">{{ form.as_p }}</div>
+    <div class="form-row">
+      {{ form.as_p }} {% if form.errors %}
+      <div class="alert alert-danger">{{ form.errors }}</div>
+      {% endif %}
+    </div>
     {% endfor %}
   </div>
 

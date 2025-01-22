@@ -1,6 +1,7 @@
 from django.shortcuts import get_object_or_404, render, redirect
-from .forms import OrderForm, OrderItemFormSet
 from django.db.models import Sum, Q
+from django.contrib import messages
+from .forms import OrderForm, OrderItemFormSet
 from .models import Order
 
 
@@ -12,6 +13,8 @@ def index_view(request):
             | Q(table_number__icontains=search_query)
             | Q(status__icontains=search_query)
         )
+        if not orders.exists():
+            messages.info(request, "Заказы по вашему запросу не найдены.")
     else:
         orders = Order.objects.all()
     return render(request, "orders/index.html", {"orders": orders})
@@ -60,8 +63,13 @@ def edit_order_view(request, order_id):
 
 
 def delete_order_view(request, order_id):
-    order = get_object_or_404(Order, id=order_id)
-    order.delete()
+    try:
+        order = Order.objects.get(id=order_id)
+        order.delete()
+        messages.success(request, "Заказ успешно удален.")
+    except Order.DoesNotExist:
+
+        messages.error(request, "Заказ не найден.")
     return redirect("index")
 
 
