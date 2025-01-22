@@ -6,6 +6,10 @@ from .models import Order
 
 
 def index_view(request):
+    """
+    Отображает главную страницу со списком заказов.
+    Поддерживает поиск заказов по ID, номеру стола или статусу.
+    """
     search_query = request.GET.get("search", "")
     if search_query:
         orders = Order.objects.filter(
@@ -21,6 +25,10 @@ def index_view(request):
 
 
 def create_order_view(request):
+    """
+    Обрабатывает создание нового заказа.
+    Использует OrderForm для данных заказа и OrderItemFormSet для элементов заказа.
+    """
     if request.method == "POST":
         order_form = OrderForm(request.POST)
         formset = OrderItemFormSet(request.POST)
@@ -44,6 +52,10 @@ def create_order_view(request):
 
 
 def edit_order_view(request, order_id):
+    """
+    Обрабатывает редактирование существующего заказа.
+    Использует OrderForm и OrderItemFormSet для обновления данных.
+    """
     order = get_object_or_404(Order, id=order_id)
     if request.method == "POST":
         order_form = OrderForm(request.POST, instance=order)
@@ -63,6 +75,10 @@ def edit_order_view(request, order_id):
 
 
 def delete_order_view(request, order_id):
+    """
+    Обрабатывает удаление заказа.
+    Если заказ не найден, выводит сообщение об ошибке.
+    """
     try:
         order = Order.objects.get(id=order_id)
         order.delete()
@@ -74,6 +90,9 @@ def delete_order_view(request, order_id):
 
 
 def revenue_view(request):
+    """
+    Обрабатывает отображение общей выручки
+    """
     total_revenue = (
         Order.objects.filter(status="оплачено").aggregate(Sum("total_price"))[
             "total_price__sum"
