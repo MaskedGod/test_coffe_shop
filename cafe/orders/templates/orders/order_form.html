@@ -1,0 +1,33 @@
+{% extends 'base.html' %} {% block content %}
+<h2>Создание нового заказа</h2>
+
+<form method="POST">
+  {% csrf_token %} {{ order_form.as_p }}
+
+  <h3>Добавить продукты</h3>
+  <div id="order-items">
+    {{ formset.management_form }} {% for form in formset %}
+    <div class="form-row">{{ form.as_p }}</div>
+    {% endfor %}
+  </div>
+
+  <button type="button" id="add-item">Добавить продукт</button>
+  <button type="submit">Создать заказ</button>
+</form>
+
+<script>
+  document.getElementById("add-item").addEventListener("click", function () {
+    var formCount = document.querySelectorAll("#order-items .form-row").length;
+    var newForm = document.createElement("div");
+    newForm.classList.add("form-row");
+    newForm.innerHTML = document
+      .getElementById("empty-form")
+      .innerHTML.replace(/__prefix__/g, formCount);
+    document.getElementById("order-items").appendChild(newForm);
+    document.getElementById("id_form-TOTAL_FORMS").value = formCount + 1;
+  });
+</script>
+
+<div id="empty-form" style="display: none">{{ formset.empty_form.as_p }}</div>
+
+{% endblock %}

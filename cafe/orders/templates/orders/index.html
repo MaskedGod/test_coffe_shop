@@ -1,5 +1,9 @@
 {% extends 'base.html' %} {% block content %}
+
 <h1>Управление заказами</h1>
+
 <p>Система управления заказами в кафе</p>
-<a href="#">Создать заказ</a>
+
+<a href="{% url 'create_order' %}">Создать заказ</a>
+
 {% endblock %}
